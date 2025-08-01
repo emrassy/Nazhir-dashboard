@@ -3,7 +3,7 @@
 import { useTransition } from "react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { deleteAbsensi } from "./actions" // disesuaikan dengan path relatif
+import { deleteAbsensi } from "./actions" 
 
 export function DeleteButton({ id }: { id: string }) {
   const [isPending, startTransition] = useTransition()

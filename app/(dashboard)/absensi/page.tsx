@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useState, useTransition } from "react"
-import { deleteAbsensi, getAbsensiList } from "./actions" // pastikan fungsi ini ada
+import { deleteAbsensi, getAbsensiList } from "./actions" 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { CalendarDays, PlusCircle } from "lucide-react"
@@ -10,7 +10,7 @@ import { CalendarDays, PlusCircle } from "lucide-react"
 type Absensi = {
   id: string
   namaSantri: string
-  tanggal: string // ISO format string
+  tanggal: string 
   status: string
   catatan?: string | null
 }

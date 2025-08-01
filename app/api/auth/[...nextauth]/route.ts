@@ -30,8 +30,7 @@ export const authOptions: AuthOptions = {
 
         const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) return null;
-
-        // ✅ Return user asli dari Prisma (wajib untuk menghindari TypeScript error)
+       
         return user;
       },
     }),

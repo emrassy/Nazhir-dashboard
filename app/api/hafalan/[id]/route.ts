@@ -1,8 +1,6 @@
-// app/api/hafalan/[id]/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-// GET /api/hafalan/:id
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
     const hafalan = await db.hafalan.findUnique({
@@ -19,7 +17,6 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// PUT /api/hafalan/:id
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
     const body = await req.json();
@@ -45,7 +42,6 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-// DELETE /api/hafalan/:id
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   try {
     await db.hafalan.delete({

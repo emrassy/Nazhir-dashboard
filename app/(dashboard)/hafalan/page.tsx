@@ -36,7 +36,7 @@ export default function HafalanPage() {
         judulSurah,
         ayat,
         tanggal,
-        // tambahkan field `santriId` jika dibutuhkan oleh API
+      
       }),
     });
     if (res.ok) {

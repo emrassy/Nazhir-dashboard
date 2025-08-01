@@ -1,4 +1,3 @@
-// app/api/hafalan/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
@@ -34,7 +33,7 @@ export async function POST(req: Request) {
         ayat,
         catatan,
         santri: {
-          connect: { id: santriId }, // ini cara menghubungkan dengan relasi
+          connect: { id: santriId },
         },
       },
     });
