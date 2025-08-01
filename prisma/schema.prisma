@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String
+  role          String    @default("user")
+
+  @@map("users")
+}
+
+model Santri {
+  id      String    @id @default(cuid())
+  name    String
+  kelas   String
+  hafalan Hafalan[] @relation("SantriToHafalan")
+
+  createdAt DateTime @default(now())
+}
+
+model Hafalan {
+  id       String   @id @default(cuid())
+  tanggal  DateTime
+  surat    String
+  ayat     String
+  catatan  String?
+  santriId String
+  santri   Santri   @relation("SantriToHafalan", fields: [santriId], references: [id])
+}
+
+model Absensi {
+  id         String   @id @default(cuid())
+  namaSantri String
+  tanggal    DateTime @default(now())
+  status     String   // Hadir / Izin / Sakit / Alpha
+  catatan    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+

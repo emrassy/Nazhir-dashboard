@@ -1,0 +1,59 @@
+// app/api/hafalan/[id]/route.ts
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
+
+// GET /api/hafalan/:id
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  try {
+    const hafalan = await db.hafalan.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!hafalan) {
+      return NextResponse.json({ message: "Data tidak ditemukan" }, { status: 404 });
+    }
+
+    return NextResponse.json(hafalan);
+  } catch (error) {
+    return NextResponse.json({ message: "Gagal mengambil data", error }, { status: 500 });
+  }
+}
+
+// PUT /api/hafalan/:id
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+  try {
+    const body = await req.json();
+    const { tanggal, surat, ayat, catatan } = body;
+
+    if (!tanggal || !surat || !ayat) {
+      return NextResponse.json({ message: "Tanggal, surat, dan ayat wajib diisi" }, { status: 400 });
+    }
+
+    const updated = await db.hafalan.update({
+      where: { id: params.id },
+      data: {
+        tanggal: new Date(tanggal),
+        surat,
+        ayat,
+        catatan,
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    return NextResponse.json({ message: "Gagal mengupdate data", error }, { status: 500 });
+  }
+}
+
+// DELETE /api/hafalan/:id
+export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+  try {
+    await db.hafalan.delete({
+      where: { id: params.id },
+    });
+
+    return NextResponse.json({ message: "Berhasil dihapus" });
+  } catch (error) {
+    return NextResponse.json({ message: "Gagal menghapus data", error }, { status: 500 });
+  }
+}
