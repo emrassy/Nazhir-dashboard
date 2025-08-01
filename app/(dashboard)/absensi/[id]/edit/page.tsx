@@ -7,16 +7,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { absensiFormSchema } from "@/lib/schema"
 import { revalidatePath } from "next/cache"
 
-type Props = {
-  params: {
-    id: string
-  }
-}
-
-export default async function EditAbsensiPage({ params }: Props) {
-  const absensi = await db.absensi.findUnique({
-    where: { id: params.id },
-  })
+export default async function EditAbsensiPage({
+  params,
+}: {
+  params: { id: string }
+}) {
+  const absensi = await db.absensi.findUnique({ where: { id: params.id } })
 
   if (!absensi) return notFound()
 
@@ -52,19 +48,13 @@ export default async function EditAbsensiPage({ params }: Props) {
       <h1 className="text-xl font-bold mb-4">Edit Absensi Santri</h1>
 
       <div>
-        <Label htmlFor="namaSantri">Nama Santri</Label>
-        <Input
-          id="namaSantri"
-          name="namaSantri"
-          defaultValue={absensi.namaSantri}
-          required
-        />
+        <Label>Nama Santri</Label>
+        <Input name="namaSantri" defaultValue={absensi.namaSantri} required />
       </div>
 
       <div>
-        <Label htmlFor="tanggal">Tanggal</Label>
+        <Label>Tanggal</Label>
         <Input
-          id="tanggal"
           type="date"
           name="tanggal"
           defaultValue={absensi.tanggal.toISOString().split("T")[0]}
@@ -73,22 +63,13 @@ export default async function EditAbsensiPage({ params }: Props) {
       </div>
 
       <div>
-        <Label htmlFor="status">Status</Label>
-        <Input
-          id="status"
-          name="status"
-          defaultValue={absensi.status}
-          required
-        />
+        <Label>Status</Label>
+        <Input name="status" defaultValue={absensi.status} required />
       </div>
 
       <div>
-        <Label htmlFor="catatan">Catatan</Label>
-        <Textarea
-          id="catatan"
-          name="catatan"
-          defaultValue={absensi.catatan || ""}
-        />
+        <Label>Catatan</Label>
+        <Textarea name="catatan" defaultValue={absensi.catatan || ""} />
       </div>
 
       <Button type="submit" className="w-full mt-4">
