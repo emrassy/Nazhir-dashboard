@@ -1,14 +1,13 @@
-// app/layout.tsx
-import { ClientProvider } from "../client-provider";
+import { ClientProvider } from '../client-provider';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
-      <body>
-        <ClientProvider>
-          {children}
-        </ClientProvider>
-      </body>
-    </html>
+    <ClientProvider>
+      {children}
+    </ClientProvider>
   );
 }
