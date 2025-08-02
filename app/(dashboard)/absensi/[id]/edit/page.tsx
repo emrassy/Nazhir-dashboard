@@ -7,12 +7,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { absensiFormSchema } from "@/lib/schema"
 import { revalidatePath } from "next/cache"
 
-export default async function EditAbsensiPage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const absensi = await db.absensi.findUnique({ where: { id: params.id } })
+// Definisikan tipe untuk parameter Next.js 15
+interface EditAbsensiPageProps {
+  params: Promise<{ id: string }>
+}
+
+export default async function EditAbsensiPage({ params }: EditAbsensiPageProps) {
+  // Await params untuk mendapatkan id
+  const { id } = await params
+  
+  const absensi = await db.absensi.findUnique({ where: { id } })
 
   if (!absensi) return notFound()
 
@@ -30,7 +34,7 @@ export default async function EditAbsensiPage({
     const { namaSantri, tanggal, status, catatan } = parsed.data
 
     await db.absensi.update({
-      where: { id: params.id },
+      where: { id }, // Gunakan id yang sudah di-resolve
       data: {
         namaSantri,
         tanggal: new Date(tanggal),
@@ -63,8 +67,13 @@ export default async function EditAbsensiPage({
       </div>
 
       <div>
-        <Label>Status</Label>
-        <Input name="status" defaultValue={absensi.status} required />
+        <Label>Status Kehadiran</Label>
+        <select name="status" defaultValue={absensi.status} className="w-full border rounded p-2" required>
+          <option value="Hadir">Hadir</option>
+          <option value="Izin">Izin</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Alpha">Alpha</option>
+        </select>
       </div>
 
       <div>

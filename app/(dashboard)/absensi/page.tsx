@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from "react"
 import { deleteAbsensi, getAbsensiList } from "./actions" 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { CalendarDays, PlusCircle } from "lucide-react"
+import { PlusCircle } from "lucide-react" // Menghapus CalendarDays yang tidak digunakan
 
 type Absensi = {
   id: string
@@ -15,7 +15,7 @@ type Absensi = {
   catatan?: string | null
 }
 
-function DeleteButton({ id }: { id: string }) {
+function DeleteButton({ id, onDelete }: { id: string; onDelete: () => void }) {
   const [isPending, startTransition] = useTransition()
 
   const handleDelete = () => {
@@ -23,8 +23,9 @@ function DeleteButton({ id }: { id: string }) {
       try {
         await deleteAbsensi(id)
         toast.success("Data absensi berhasil dihapus")
-        location.reload()
+        onDelete() // Memanggil fungsi untuk memperbarui daftar absensi
       } catch (error) {
+        console.error("Error deleting absensi:", error) // Menambahkan logging untuk kesalahan
         toast.error("Gagal menghapus data")
       }
     })
@@ -40,8 +41,18 @@ function DeleteButton({ id }: { id: string }) {
 export default function AbsensiPage() {
   const [absensiList, setAbsensiList] = useState<Absensi[]>([])
 
+  const fetchAbsensiList = async () => {
+    try {
+      const data = await getAbsensiList()
+      setAbsensiList(data)
+    } catch (error) {
+      console.error("Error fetching absensi list:", error) // Menambahkan logging untuk kesalahan
+      toast.error("Gagal memuat data absensi.")
+    }
+  }
+
   useEffect(() => {
-    getAbsensiList().then(setAbsensiList)
+    fetchAbsensiList()
   }, [])
 
   return (
@@ -83,7 +94,7 @@ export default function AbsensiPage() {
                     <Link href={`/absensi/${absensi.id}/edit`}>
                       <Button variant="outline">Edit</Button>
                     </Link>
-                    <DeleteButton id={absensi.id} />
+                    <DeleteButton id={absensi.id} onDelete={fetchAbsensiList} />
                   </td>
                 </tr>
               ))}

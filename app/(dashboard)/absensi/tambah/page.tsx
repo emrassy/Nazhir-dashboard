@@ -9,9 +9,16 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
+interface FormData {
+  namaSantri: string;
+  tanggal: string;
+  status: string;
+  catatan?: string;
+}
+
 export default function TambahAbsensiPage() {
   const router = useRouter()
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<FormData>({
     namaSantri: "",
     tanggal: new Date().toISOString().split("T")[0],
     status: "Hadir",
@@ -36,6 +43,7 @@ export default function TambahAbsensiPage() {
       toast.success("Absensi berhasil ditambahkan")
       router.push("/absensi")
     } catch (error) {
+      console.error("Error saving absensi:", error) // Menambahkan logging untuk kesalahan
       toast.error("Terjadi kesalahan saat menyimpan")
     }
   }
@@ -55,10 +63,10 @@ export default function TambahAbsensiPage() {
         <div>
           <Label>Status Kehadiran</Label>
           <select name="status" value={form.status} onChange={handleChange} className="w-full border rounded p-2">
-            <option>Hadir</option>
-            <option>Izin</option>
-            <option>Sakit</option>
-            <option>Alpha</option>
+            <option value="Hadir">Hadir</option>
+            <option value="Izin">Izin</option>
+            <option value="Sakit">Sakit</option>
+            <option value="Alpha">Alpha</option>
           </select>
         </div>
         <div>
@@ -73,4 +81,3 @@ export default function TambahAbsensiPage() {
     </div>
   )
 }
-

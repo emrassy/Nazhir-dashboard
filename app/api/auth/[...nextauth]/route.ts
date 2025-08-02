@@ -4,7 +4,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-export const authOptions: AuthOptions = {
+// Hapus export di sini - jadikan const biasa
+const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
     strategy: "jwt",
