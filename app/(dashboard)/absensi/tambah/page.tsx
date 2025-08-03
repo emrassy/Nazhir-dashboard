@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -42,29 +41,15 @@ export default function TambahAbsensiPage() {
   }
 
   const validateForm = (): boolean => {
-    if (!form.namaSantri.trim()) {
-      toast.error("Nama santri harus diisi")
-      return false
-    }
-
-    if (!form.tanggal) {
-      toast.error("Tanggal harus diisi")
-      return false
-    }
-
-    if (!form.status) {
-      toast.error("Status kehadiran harus dipilih")
-      return false
-    }
+    if (!form.namaSantri.trim()) return false
+    if (!form.tanggal) return false
+    if (!form.status) return false
 
     const selectedDate = new Date(form.tanggal)
     const today = new Date()
     today.setHours(23, 59, 59, 999)
 
-    if (selectedDate > today) {
-      toast.error("Tanggal tidak boleh lebih dari hari ini")
-      return false
-    }
+    if (selectedDate > today) return false
 
     return true
   }
@@ -72,11 +57,9 @@ export default function TambahAbsensiPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Prevent double submission
     if (isLoading || isSubmittingRef.current) return
-    
     if (!validateForm()) return
-    
+
     setIsLoading(true)
     isSubmittingRef.current = true
 
@@ -96,18 +79,9 @@ export default function TambahAbsensiPage() {
       })
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => null)
-        throw new Error(errorData?.message || "Gagal menambahkan absensi")
+        throw new Error("Gagal menambahkan absensi")
       }
 
-      // Clear existing toasts and show success
-      toast.dismiss()
-      toast.success("Absensi berhasil ditambahkan", { 
-        id: `tambah-success-${Date.now()}`,
-        duration: 3000
-      })
-
-      // Reset form
       setForm({
         namaSantri: "",
         tanggal: new Date().toISOString().split("T")[0],
@@ -115,19 +89,12 @@ export default function TambahAbsensiPage() {
         catatan: "",
       })
 
-      // Navigate with success parameter
       setTimeout(() => {
         router.push("/absensi?added=true")
       }, 1500)
 
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error saving absensi:", error)
-      
-      toast.dismiss()
-      toast.error(error.message || "Terjadi kesalahan saat menyimpan", {
-        id: `tambah-error-${Date.now()}`,
-        duration: 4000
-      })
     } finally {
       setIsLoading(false)
       setTimeout(() => {

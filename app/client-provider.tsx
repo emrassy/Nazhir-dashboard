@@ -1,23 +1,25 @@
 'use client';
 
-import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "sonner";
-import { useEffect, useState } from "react";
+import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from 'next-themes';
+import { ReactNode, useEffect, useState } from 'react';
 
-export function ClientProvider({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = useState(false);
+interface ClientProviderProps {
+  children: ReactNode;
+}
+
+export function ClientProvider({ children }: ClientProviderProps) {
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setIsMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!isMounted) return null;
 
   return (
     <SessionProvider>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <Toaster richColors position="top-right" />
         {children}
       </ThemeProvider>
     </SessionProvider>

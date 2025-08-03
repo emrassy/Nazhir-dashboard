@@ -1,7 +1,7 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
 interface ProvidersProps {
@@ -9,45 +9,34 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
-  const [mounted, setMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    setIsMounted(true);
   }, []);
 
-  // Render versi SSR-safe dulu
-  if (!mounted) {
-    return (
-      <SessionProvider>
-        {children}
-        {/* Toaster tidak di-render saat SSR untuk menghindari hydration mismatch */}
-      </SessionProvider>
-    );
+  if (!isMounted) {
+    return <SessionProvider>{children}</SessionProvider>;
   }
 
-  // Render lengkap setelah mounted
   return (
-    <SessionProvider
-      // Tambahkan konfigurasi untuk stabilitas
-      refetchInterval={0}
-      refetchOnWindowFocus={false}
-    >
+    <SessionProvider refetchInterval={0} refetchOnWindowFocus={false}>
       {children}
-      <Toaster 
-        richColors 
-        position="top-center"
-        expand={true}
-        closeButton={true}
-        // Tambahkan props untuk konsistensi
+      <Toaster
+        position="top-right"
         theme="light"
+        richColors
         toastOptions={{
-          style: {
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            color: '#1f2937',
-          },
-          className: 'toast',
           duration: 4000,
+          style: {
+            background: "#e0f2fe",
+            border: "1px solid #3b82f6",
+            color: "#1e3a8a",
+          },
+          classNames: {
+            success: "text-blue-700 [&>svg]:text-blue-600",
+            error: "text-red-700 [&>svg]:text-red-600",
+          },
         }}
       />
     </SessionProvider>
