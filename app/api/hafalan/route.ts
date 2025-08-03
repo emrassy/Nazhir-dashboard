@@ -5,23 +5,29 @@ export async function GET() {
   try {
     const hafalan = await db.hafalan.findMany({
       orderBy: { tanggal: "desc" },
-      include: { santri: true }, // kalau kamu ingin info santri juga
     });
 
     return NextResponse.json(hafalan);
   } catch (error) {
-    return NextResponse.json({ message: "Gagal mengambil data", error }, { status: 500 });
+    console.error("Database error in GET /api/hafalan:", error);
+    return NextResponse.json(
+      { message: "Gagal mengambil data hafalan" },
+      { status: 500 }
+    );
   }
 }
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tanggal, surat, ayat, catatan, santriId } = body;
+    const { tanggal, surat, ayat, catatan, namaSantri } = body;
 
-    if (!tanggal || !surat || !ayat || !santriId) {
+    console.log("Received POST data:", { tanggal, surat, ayat, catatan, namaSantri });
+
+    // Validasi input
+    if (!tanggal || !surat || !ayat || !namaSantri) {
       return NextResponse.json(
-        { message: "Tanggal, surat, ayat, dan santriId wajib diisi" },
+        { message: "Tanggal, surat, ayat, dan nama santri wajib diisi" },
         { status: 400 }
       );
     }
@@ -31,15 +37,20 @@ export async function POST(req: Request) {
         tanggal: new Date(tanggal),
         surat,
         ayat,
-        catatan,
-        santri: {
-          connect: { id: santriId },
-        },
+        catatan: catatan || null,
+        namaSantri,
       },
     });
 
+    console.log("Created hafalan:", newHafalan);
     return NextResponse.json(newHafalan, { status: 201 });
+
   } catch (error) {
-    return NextResponse.json({ message: "Gagal menambahkan data", error }, { status: 500 });
+    console.error("Database error in POST /api/hafalan:", error);
+
+    return NextResponse.json(
+      { message: "Gagal menambahkan data hafalan" },
+      { status: 500 }
+    );
   }
 }

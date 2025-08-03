@@ -20,31 +20,32 @@ model User {
 }
 
 model Santri {
-  id      String    @id @default(cuid())
-  name    String
-  kelas   String
-  hafalan Hafalan[] @relation("SantriToHafalan")
-
+  id        String   @id @default(cuid())
+  name      String
+  kelas     String
   createdAt DateTime @default(now())
+
+  // ❌ Dihapus: hafalan Hafalan[] @relation("SantriToHafalan")
 }
 
 model Hafalan {
-  id       String   @id @default(cuid())
-  tanggal  DateTime
-  surat    String
-  ayat     String
-  catatan  String?
-  santriId String
-  santri   Santri   @relation("SantriToHafalan", fields: [santriId], references: [id])
+  id          String   @id @default(uuid())
+  namaSantri  String
+  tanggal     DateTime
+  surat       String
+  ayat        String
+  catatan     String?
+  createdAt   DateTime @default(now())
 }
 
 model Absensi {
-  id         String   @id @default(cuid())
+  id         Int      @id @default(autoincrement())
   namaSantri String
-  tanggal    DateTime @default(now())
-  status     String   // Hadir / Izin / Sakit / Alpha
+  tanggal    DateTime
+  status     String
   catatan    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-}
 
+  @@map("absensi")
+}

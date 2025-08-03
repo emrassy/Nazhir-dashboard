@@ -1,13 +1,21 @@
 import { ClientProvider } from '../client-provider';
+import { ReactNode } from 'react';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface DashboardLayoutProps {
+  children: ReactNode;
+}
+
+export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <ClientProvider>
-      {children}
+      <div className="dashboard-layout">
+        {children}
+      </div>
     </ClientProvider>
   );
 }
+
+export const metadata = {
+  title: 'Dashboard',
+  description: 'Dashboard application',
+};
