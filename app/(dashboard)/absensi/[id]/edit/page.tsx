@@ -7,19 +7,20 @@ import { Textarea } from "@/components/ui/textarea";
 import { absensiFormSchema } from "@/lib/schema";
 import { revalidatePath } from "next/cache";
 
-// Definisikan tipe untuk parameter Next.js 15
 interface EditAbsensiPageProps {
-  params: { id: string }; // id tetap sebagai string
+  params: Promise<{ id: string }>; 
 }
 
 export default async function EditAbsensiPage({ params }: EditAbsensiPageProps) {
-  // Ambil id dari params
-  const { id } = params;
+   const { id } = await params;
 
-  // Konversi id ke number jika id di Prisma bertipe number
   const numericId = parseInt(id, 10);
 
-  const absensi = await db.absensi.findUnique({ where: { id: numericId } }); // Gunakan numericId
+   if (isNaN(numericId)) {
+    return notFound();
+  }
+
+  const absensi = await db.absensi.findUnique({ where: { id: numericId } });
 
   if (!absensi) return notFound();
 
@@ -36,18 +37,24 @@ export default async function EditAbsensiPage({ params }: EditAbsensiPageProps) 
 
     const { namaSantri, tanggal, status, catatan } = parsed.data;
 
-    await db.absensi.update({
-      where: { id: numericId }, // Gunakan numericId
-      data: {
-        namaSantri,
-        tanggal: new Date(tanggal),
-        status,
-        catatan,
-      },
-    });
+    try {
+      await db.absensi.update({
+        where: { id: numericId },
+        data: {
+          namaSantri,
+          tanggal: new Date(tanggal),
+          status,
+          catatan,
+        },
+      });
 
-    revalidatePath("/absensi");
-    redirect("/absensi");
+      revalidatePath("/absensi");
+      redirect("/absensi");
+    } catch (updateError) {
+      console.error("Error updating absensi:", updateError);
+      // Anda bisa handle error ini sesuai kebutuhan
+      throw updateError;
+    }
   }
 
   return (

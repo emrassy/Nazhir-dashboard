@@ -11,7 +11,6 @@ interface ProvidersProps {
 export default function Providers({ children }: ProvidersProps) {
   const [mounted, setMounted] = useState(false);
 
-  // Pastikan component sudah mounted di client
   useEffect(() => {
     setMounted(true);
   }, []);

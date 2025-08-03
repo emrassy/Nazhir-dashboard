@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+// Removed unused router import
 
 interface Hafalan {
   id: string;
@@ -17,7 +17,7 @@ interface Hafalan {
 }
 
 export default function HafalanPage() {
-  const router = useRouter();
+  // Removed unused router variable
   const [hafalanList, setHafalanList] = useState<Hafalan[]>([]);
   const [namaSantri, setNamaSantri] = useState('');
   const [surat, setSurat] = useState('');
@@ -36,6 +36,7 @@ export default function HafalanPage() {
         toast.error('Gagal memuat data hafalan');
       }
     } catch (error) {
+      console.error('Error fetching hafalan:', error);
       toast.error('Terjadi kesalahan saat memuat data');
     }
   };
@@ -77,9 +78,11 @@ export default function HafalanPage() {
         await fetchHafalan();
       } else {
         const errorText = await res.text();
+        console.error('API error:', errorText);
         toast.error(errorText || 'Gagal menambah hafalan');
       }
     } catch (error) {
+      console.error('Network error adding hafalan:', error);
       toast.error('Kesalahan jaringan saat menambah hafalan');
     } finally {
       setIsLoading(false);
@@ -99,9 +102,11 @@ export default function HafalanPage() {
         setHafalanList(prev => prev.filter(h => h.id !== id));
       } else {
         const errorText = await res.text();
+        console.error('Delete error:', errorText);
         toast.error(errorText || 'Gagal menghapus data');
       }
     } catch (error) {
+      console.error('Network error deleting hafalan:', error);
       toast.error('Terjadi kesalahan saat menghapus data');
     }
   };

@@ -2,6 +2,20 @@
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
+// Helper function untuk validasi dan parsing ID
+function parseAndValidateId(id: string): { success: true; data: number } | { success: false; error: string } {
+  if (!id) {
+    return { success: false, error: "ID absensi harus disediakan" };
+  }
+
+  const parsedId = parseInt(id);
+  if (isNaN(parsedId)) {
+    return { success: false, error: "Format ID tidak valid" };
+  }
+
+  return { success: true, data: parsedId };
+}
+
 // GET - Mengambil data absensi berdasarkan ID
 export async function GET(
   request: NextRequest, 
@@ -13,33 +27,19 @@ export async function GET(
     const { id } = await params;
     console.log("Requested ID:", id);
     
-    // Validasi ID
-    if (!id) {
+    // Validasi dan parsing ID
+    const idValidation = parseAndValidateId(id);
+    if (!idValidation.success) {
       return NextResponse.json(
         { 
           success: false,
-          error: "ID absensi harus disediakan" 
+          error: idValidation.error
         },
         { status: 400 }
       );
     }
-    
-    // Convert string ID ke number jika diperlukan
-    let absensiId: number;
-    try {
-      absensiId = parseInt(id);
-      if (isNaN(absensiId)) {
-        throw new Error("Invalid ID format");
-      }
-    } catch (idError) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: "Format ID tidak valid" 
-        },
-        { status: 400 }
-      );
-    }
+
+    const absensiId = idValidation.data;
     
     // Cari data di database
     const data = await db.absensi.findUnique({ 
@@ -89,33 +89,19 @@ export async function PUT(
     const { id } = await params;
     console.log("Updating ID:", id);
     
-    // Validasi ID
-    if (!id) {
+    // Validasi dan parsing ID
+    const idValidation = parseAndValidateId(id);
+    if (!idValidation.success) {
       return NextResponse.json(
         { 
           success: false,
-          error: "ID absensi harus disediakan" 
+          error: idValidation.error
         },
         { status: 400 }
       );
     }
-    
-    // Convert string ID ke number
-    let absensiId: number;
-    try {
-      absensiId = parseInt(id);
-      if (isNaN(absensiId)) {
-        throw new Error("Invalid ID format");
-      }
-    } catch (idError) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: "Format ID tidak valid" 
-        },
-        { status: 400 }
-      );
-    }
+
+    const absensiId = idValidation.data;
     
     // Parse request body
     let body;
@@ -123,6 +109,7 @@ export async function PUT(
       body = await req.json();
       console.log("Update body:", body);
     } catch (parseError) {
+      console.error("JSON parse error:", parseError);
       return NextResponse.json(
         { 
           success: false,
@@ -239,33 +226,19 @@ export async function DELETE(
     const { id } = await params;
     console.log("Deleting ID:", id);
     
-    // Validasi ID
-    if (!id) {
+    // Validasi dan parsing ID
+    const idValidation = parseAndValidateId(id);
+    if (!idValidation.success) {
       return NextResponse.json(
         { 
           success: false,
-          error: "ID absensi harus disediakan" 
+          error: idValidation.error
         },
         { status: 400 }
       );
     }
-    
-    // Convert string ID ke number
-    let absensiId: number;
-    try {
-      absensiId = parseInt(id);
-      if (isNaN(absensiId)) {
-        throw new Error("Invalid ID format");
-      }
-    } catch (idError) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: "Format ID tidak valid" 
-        },
-        { status: 400 }
-      );
-    }
+
+    const absensiId = idValidation.data;
     
     // Cek apakah data ada sebelum dihapus
     const existingData = await db.absensi.findUnique({
